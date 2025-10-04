@@ -88,4 +88,4 @@ func toSumNumber(int: Int, sum: Int) -> Int {
     return int + sum
 }
 
-print(createRandomNumbers(from: 1, to: 10, count: 5, funcToMakeSmthWithNumber: {toSumNumber(int: $0, sum: 1)))
+print(createRandomNumbers(from: 1, to: 10, count: 5, funcToMakeSmthWithNumber: {toSumNumber(int: $0, sum: 1)}))
