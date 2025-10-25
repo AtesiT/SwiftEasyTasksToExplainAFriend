@@ -20,8 +20,8 @@ import Foundation
 //  Если реализовать CustomStringConvertible, то необходимо реализовать Description
 
 final class User {
-    let name: String
-    let age: Int
+    var name: String
+    var age: Int
 
     init(name: String, age: Int) {
         self.name = name
@@ -41,12 +41,30 @@ extension User: CustomStringConvertible {
 // MARK: - JSONSeriazable
 
 protocol JSONSeriazable {
+    var identifier: String { get }
     func toJSON() -> [String: Any]
+    func fromJSON(_ json: [String: Any])
 }
 
+// Делаем свойство и метод протокола необязательным в реализации
+extension JSONSeriazable {
+    var identifier: String {
+        ""
+    }
+    func fromJSON(_ json: [String: Any]) {}
+}
+
+// Добавляем наш протокол к классу
 extension User: JSONSeriazable {
+    var identifier: String {
+        "User_\(name)"
+    }
     func toJSON() -> [String: Any] {
         ["name":name,"age":age]
+    }
+    func fromJSON(_ json: [String : Any]) {
+        name = json["name"] as? String ?? ""
+        age = json["age"] as? Int ?? 0
     }
 }
 
@@ -54,9 +72,12 @@ let userOne = User(name: "Alex", age: 20)
 print(userOne)
 
 // Создание JSON файла на основе модели данных
-let json = userOne.toJSON()
-print(json)
+print(userOne.toJSON())
 
+// Обновление свойт локальной модели на основе JSON
+let json: [String: Any] = ["name": "Steve", "age": 20]
+userOne.fromJSON(json)
+print(userOne)
 
 // MARK: - Attempt to create a new protocol
 
