@@ -100,4 +100,30 @@ print(toFilterCars(cars: newCars, filter: { $0 > 500000 }))
                                 closures
 */
 
-// MARK: - 
+// MARK: - Trailing closures
+
+/*
+    If our func has on last parameter is func(in our example is filter {})
+*/
+print(toFilterCars(cars: newCars) {
+    $0 <= 500000
+})
+
+print(toFilterCars(cars: newCars) { $0 > 500000 })
+
+// MARK: - Example with datas in closure
+
+func checkData(success: (_ result: String)->(), notSuccess: (_ error: String)->()){
+    // Here is a request..
+    
+    let response = false
+    response ? success("Success") : notSuccess("Fail")
+}
+
+checkData(success: { result in
+    print(result)
+}) { result in
+    print(result)
+}
+
+
