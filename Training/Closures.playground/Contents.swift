@@ -43,3 +43,61 @@ func richCars(price: Int) -> Bool {
 print(toFilterCars(cars: newCars, filter: richCars))
 print(toFilterCars(cars: newCars, filter: poorCars))
 
+
+// MARK: - The First Attempt of the Closure
+print(toFilterCars(cars: newCars, filter: {(price: Int) -> Bool in
+    if price <= 500000 {
+        return true
+    } else {return false}
+}))
+
+print(toFilterCars(cars: newCars, filter: {(price: Int) -> Bool in
+    if price > 500000 {
+        return true
+    } else {return false}
+}))
+
+
+// MARK: - The second Attempt of the Closure (make smaller code)
+
+//  We can destroy the IF ELSE because the expression return true\false anyway
+
+print(toFilterCars(cars: newCars, filter: {(price: Int) -> Bool in
+    return price <= 500000
+}))
+
+print(toFilterCars(cars: newCars, filter: {(price: Int) -> Bool in
+    return price > 500000
+}))
+
+// MARK: - The third Attempt of the Closure (make smaller code again)
+
+/*
+    Swift the smart and language and knews what to return in the function
+    Also Swift the safe language and we can destroy parameters and type of return.
+    Because in the toFilterCars made return of type datas
+*/
+
+print(toFilterCars(cars: newCars, filter: { price in
+    price <= 500000
+}))
+
+print(toFilterCars(cars: newCars, filter: { price in
+    price > 500000
+}))
+
+// MARK: - The fourth Attempt of the Closure (make very small code)
+
+//  We can destroy parameter and word "in" because we can use $0(first parametr), $1(second parametr) etc.
+
+print(toFilterCars(cars: newCars, filter: { $0 <= 500000 }))
+
+print(toFilterCars(cars: newCars, filter: { $0 > 500000 }))
+
+/*                              These
+                                were
+                                inline
+                                closures
+*/
+
+// MARK: - 
