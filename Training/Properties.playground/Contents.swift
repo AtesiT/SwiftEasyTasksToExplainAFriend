@@ -34,12 +34,27 @@ struct Car {
             }
         }
     }
+    lazy var price: Int = getPrice()
+}
+
+// The func to interaction with lazy properties
+func getPrice()->Int{
+    print("Start")
+    
+    var i = 0
+    while i < 10 {
+        
+        i+=1
+    }
+    print("Finish")
+    return 10
 }
 
 var newCar = Car(mark: "Porsche", model: "911", year: 2000)
 print(newCar.fullName)
 newCar.fullName = "Lamborghini Huracán 1964"
 print(newCar.fullName)
+
 
 
 
