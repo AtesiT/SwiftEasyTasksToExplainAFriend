@@ -2,14 +2,31 @@
 
 class Vehicle {
     let name: String
-    
+    let owner:Owner?
     func returnName() {
         print("Your vehicle is called \(name)")
     }
     
-    init(name: String) {
+    init(name: String, owner: Owner? = nil) {
         self.name = name
+        self.owner = owner
     }
+}
+
+struct Owner {
+    var name: String
+    var descriptionOfHuman: AboutHuman
+    
+}
+
+struct AboutHuman {
+    var age: Int
+    var colorOfHairs: String
+    var insideOfPockets: [Things]?
+}
+
+struct Things {
+    var thingIs: String
 }
 
 class Aircraft: Vehicle {
@@ -83,3 +100,47 @@ for againVehicle in array {
         break
     }
 }
+
+
+
+let theVehicle1 = Vehicle(name: "Ship", owner: nil)
+
+
+print("\n\n")
+let aboutHuman1 = AboutHuman(age: 25, colorOfHairs: "Brown", insideOfPockets: [Things(thingIs: "Phone"), Things(thingIs: "Keys")])
+let owner1 = Owner(name: "Alice", descriptionOfHuman: aboutHuman1)
+let theVehicle2 = Vehicle(name: "Ship2", owner: nil)
+theVehicle2.returnName()
+
+
+let aboutHuman2 = AboutHuman(age: 20, colorOfHairs: "Blonde", insideOfPockets: nil)
+let aboutHuman3 = AboutHuman(age: 22, colorOfHairs: "Black", insideOfPockets: nil)
+
+let owner2 = Owner(name: "Bob", descriptionOfHuman: aboutHuman2)
+let owner3 = Owner(name: "Charlie", descriptionOfHuman: aboutHuman3)
+
+let arrayOwners = [owner1, owner2, owner3]
+
+// MARK: - Optional chain
+for everyOwner in arrayOwners {
+//    if let owner = everyOwner {
+//        if let descrtiption = owner.descriptionOfHuman {
+//            if let smthInPockets = owner.descriptionOfHuman.insideOfPockets {
+//                if let theThing = smthInPockets.first {
+//                    print(theThing.thingIs)
+//                }
+//            }
+//        }
+//    }
+    //  Print the last element of a chain
+    if let theThing = everyOwner.descriptionOfHuman.insideOfPockets?.first {
+        print(theThing)
+        print("\(everyOwner.name) has \(theThing.thingIs)")
+    }
+    //  Only check that last element of a chain presents
+    if let everyThing = everyOwner.descriptionOfHuman.insideOfPockets, !everyThing.isEmpty {
+        print(everyThing.first!)
+        print(everyThing.first!.thingIs)
+    }
+}
+
