@@ -2,6 +2,11 @@
 
 
 struct Car {
+    static var count: Int = 0
+    static func getCountCars()-> Int {
+        return Car.count
+    }
+    
     var mark: String
     var model: String
     var year: Int {
@@ -35,6 +40,12 @@ struct Car {
         }
     }
     lazy var price: Int = getPrice()
+    init(mark: String, model: String, year: Int) {
+        self.mark = mark
+        self.model = model
+        self.year = year
+        Car.count += 1
+    }
 }
 
 // The func to interaction with lazy properties
@@ -55,6 +66,10 @@ print(newCar.fullName)
 newCar.fullName = "Lamborghini Huracán 1964"
 print(newCar.fullName)
 
+var newCar2 = Car(mark: "Porsche", model: "911", year: 2000)
+var newCar3 = Car(mark: "Porsche", model: "911", year: 2000)
 
+print(Car.count)
+print(Car.getCountCars())
 
 
