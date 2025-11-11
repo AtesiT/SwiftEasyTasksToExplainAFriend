@@ -24,11 +24,20 @@ class Vehicle {
         self.price = price
     }
 }
+
+
+extension Vehicle: CustomStringConvertible {
+    var description: String {
+        return "Price of the vehicle is \(price)"
+    }
+}
+
 // Classes need init
 
 
 let vehicleOne = Vehicle(price: 10000)
 print(vehicleOne)
+// Without CusstonStringConverible just was a name of file
 // Needs to use protocol to describe
 
 
@@ -50,3 +59,4 @@ let airplaneOne = Aiplane(maxHeightFlight: 50, price: 75000)
 print(airplaneOne.price)
 print(airplaneOne.maxHeightFlight)
 print(airplaneOne.describeTheAirplane())
+
