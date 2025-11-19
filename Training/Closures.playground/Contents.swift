@@ -127,3 +127,24 @@ checkData(success: { result in
 }
 
 
+// MARK: - Repeat the topic
+
+func operationWithNumbers(_ array: [Int], _ theFunc: (Int)->Bool) -> [Int] {
+    var newArray: [Int] = []
+    
+    for checkEveryNumber in array {
+        if theFunc(checkEveryNumber) {
+            newArray.append(checkEveryNumber)
+        }
+    }
+    return array
+}
+
+
+func splitEvenNumbers(_ number: Int)->Bool{
+    number % 2 == 0 ? true : false
+}
+
+let arrayWithAnotherNumbers = [1,2,3,4,5,6,7,8,9]
+
+operationWithNumbers(arrayWithAnotherNumbers, splitEvenNumbers(_:))
