@@ -16,7 +16,11 @@ final class DataStore {
 }
 
 final class StorageManager {
+    // Делаем класс Сингельтоном (но для этого недостаточно написть лишь static let...)
+    static let shared = StorageManager()
     private let datastore = DataStore.shared
+    // Нужно добавить приватный инициализатор
+    private init () {}
     
     func addName(addedName: String) {
         if !datastore.name.contains(addedName) {
@@ -39,13 +43,13 @@ final class StorageManager {
     }
 }
 
-let storageManagerOne = StorageManager()
+let storageManagerOne = StorageManager.shared
 storageManagerOne.addName(addedName: "Rick")
 storageManagerOne.getNames()
 
 print("\n\n\n")
 
-let storageManagerTwo = StorageManager()
+let storageManagerTwo = StorageManager.shared
 storageManagerTwo.addName(addedName: "Rihanna")
 storageManagerTwo.getNames()
 
@@ -53,4 +57,16 @@ storageManagerTwo.getNames()
 
 
 
+// MARK: - Практика с созданием. Повторение всего того, что выше
 
+
+final class NewDataStore {
+    static let shared = NewDataStore()
+    private init() {}
+}
+
+final class NewDataStoreManager {
+    static let shared = NewDataStoreManager()
+    private let newDataStore = NewDataStore.shared
+    private init() {}
+}
