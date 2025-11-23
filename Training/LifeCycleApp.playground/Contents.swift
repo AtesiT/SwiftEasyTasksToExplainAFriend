@@ -1,4 +1,12 @@
 
+required init?(coder: NSCoder){
+    super.init(coder: coder)
+}
+
+override init(){
+    super.init()
+}
+
 /*
     Вызывается после десериализации объектов из файла Interface Builder
     (also before life cycle UIViewController)
@@ -159,7 +167,13 @@ override func viewDidDisappear(_ animated: Bool) {
     super.viewDidDisappear(animated)
 }
 
+/*
+        Оповещает о том, что объект был выгружен из памяти (от утечек памяти)
+        Может вызываться для всех объектов, необязательно для View.
+ */
 
-
+deinit {
+        
+}
 
 
