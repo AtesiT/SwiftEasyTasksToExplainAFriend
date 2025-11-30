@@ -101,3 +101,42 @@ enum TV: Int {
 
 let newTV = TV(rawValue: 30)
 print(newTV ?? "No TV")
+
+
+
+
+/*
+                                        Practice
+                                         Again
+                                          But
+                                          With
+                                         Switch
+*/
+
+
+enum Fruits {
+    case Apple(color: colorOfFruit), Banana, Orange
+    
+    enum colorOfFruit {
+        case green
+        case yellow
+        case red
+    }
+}
+
+let fruitOnTable = Fruits.Apple(color: .red)
+
+switch fruitOnTable {
+case .Apple(let color) where color == .red:
+    print("This is a red apple")
+case .Apple(let color) where color == .green || color == Fruits.colorOfFruit.yellow:
+    print("This is a green or yellow apple")
+case .Banana:
+    print("This is a banana")
+case .Orange:
+    print("This is an orange")
+default:
+    print("If you see this, something went wrong")
+}
+
+
