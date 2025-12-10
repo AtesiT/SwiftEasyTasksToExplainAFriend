@@ -85,8 +85,13 @@ final class cellTable: UITableViewCell {
         id.text = String(anyHuman.id)
         name.text = anyHuman.name
         email.text = anyHuman.email
-        networkManager.fetchImage(from: Images.image.url) { [unowned self] imageData in
-            photo.image = UIImage(data: imageData)
+        networkManager.fetchImage(from: Images.image.url) { [unowned self] result in
+            switch result {
+            case .success(let imageData):
+                photo.image = UIImage(data: imageData)
+            case .failure(let error):
+                print(error)
+            }
         }
         
     }
@@ -152,26 +157,38 @@ final class ImageViewController: UIViewController {
     @IBOutlet var imageView: UIImageView!
     
     private func fetchImage() {
-        networkManager.fetchImage(from: Images.image.url) { [unowned self] imageData in
-            imageView.image = UIImage(data: imageData)
+        networkManager.fetchImage(from: Images.image.url) { [unowned self] result in
+            switch result {
+            case .success(let imageData):
+                imageView.image = UIImage(data: imageData)
+            case .failure(let error):
+                print(error)
+            }
         }
     }
 }
 
 //  MARK: - NetworkManager
 
-
+enum NetworkError: Error {
+    case invalidURL
+    case noData
+    case decodingError
+}
 
 final class NetworkManager {
     static let shared = NetworkManager()
     
     private init() {}
     
-    func fetchImage(from url: URL, completion: @escaping (Data) -> Void) {
+    func fetchImage(from url: URL, completion: @escaping (Result<Data, NetworkError>) -> Void) {
         DispatchQueue.global().async {
-            guard let imageData = try? Data(contentsOf: url) else {return}
+            guard let imageData = try? Data(contentsOf: url) else {
+                completion(.failure(.noData))
+                return
+            }
             DispatchQueue.main.async {
-                completion(imageData)
+                completion(.success(imageData))
             }
         }
     }
