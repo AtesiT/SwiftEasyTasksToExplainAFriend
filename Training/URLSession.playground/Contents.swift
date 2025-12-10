@@ -133,3 +133,22 @@ extension tableViewController {
         }
     }
 }
+
+
+//  MARK: - NetworkManager
+
+final class NetworkManager {
+    static let shared = NetworkManager()
+    
+    private init() {}
+    
+    private func fetchImage(from url: URL, completion: @escaping (Data) -> Void) {
+        DispatchQueue.global().async {
+            guard let imageData = try? Data(contentsOf: url) else {return}
+            DispatchQueue.main.async {
+                completion(imageData)
+            }
+        }
+    }
+}
+
