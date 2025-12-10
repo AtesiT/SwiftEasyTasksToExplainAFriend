@@ -25,6 +25,12 @@ struct anyDataToParse: Decodable {
     let title: String?
     let number: String?
     
+    //  Just a test to convert names
+    enum CodingKeys: String, CodingKey {
+        case id = "id"
+        case title = "title"
+        case number = "number"
+    }
 }
 
 private func fetchData() {
