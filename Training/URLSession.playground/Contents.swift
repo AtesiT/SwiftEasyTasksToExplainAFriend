@@ -37,7 +37,6 @@ private func fetchData() {
         do {
             let dataFromJSON = try JSONDecoder().decode(anyDataToParse.self, from: data)
             print(dataFromJSON)
-            
         } catch {
             print(error)
         }
@@ -72,11 +71,19 @@ final class cellTable: UITableViewCell {
     @IBOutlet weak var id: UILabel!
     @IBOutlet weak var name: UILabel!
     @IBOutlet weak var email: UILabel!
+    @IBOutlet weak var photo: UIImageView!
     
     func configure(with anyHuman: arrayFromJSON) {
         id.text = String(anyHuman.id)
         name.text = anyHuman.name
         email.text = anyHuman.email
+        
+        DispatchQueue.global().async {
+            guard let imageData = try? Data(contentsOf: URL(fileReferenceLiteralResourceName: String("https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/2560px-Google_2015_logo.svg.png"))) else {return}
+            DispatchQueue.main.async { [unowned self] in
+                photo.image = UIImage(data: imageData)
+            }
+        }
     }
 }
 
@@ -109,5 +116,14 @@ final class tableViewController: UITableViewController {
         let human = arrayOfPeople[indexPath.row]
         cell.configure(with: human)
         return cell
+    }
+}
+
+
+extension tableViewController {
+    func reloadDataInNotMainThread() {
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
 }
