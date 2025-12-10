@@ -3,7 +3,7 @@ import Foundation
 enum Course {
     case Programming // 1 object
     case Math
-    case Analytics // Has an array
+    case Analytics // Has object in array
     case Science
     
     var url: URL {
@@ -22,7 +22,7 @@ enum Course {
 
 struct anyDataToParse: Decodable {
     let id: Int
-    let title: String
+    let title: String?
     let number: String?
     
 }
@@ -45,4 +45,20 @@ private func fetchData() {
     }.resume()
 }
 
+private func fetchDatas() {
+    URLSession.shared.dataTask(with: Course.Analytics.url) { data, _, error in
+        guard let data else {
+            print(error?.localizedDescription ?? "Nothing")
+            return
+        }
+        do {
+            let datas = try JSONDecoder().decode([anyDataToParse].self, from: data)
+            print(datas)
+        } catch {
+            print(error)
+        }
+    }.resume()
+}
+
 fetchData()
+fetchDatas()
