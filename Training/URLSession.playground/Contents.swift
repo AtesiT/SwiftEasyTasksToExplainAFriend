@@ -74,6 +74,8 @@ import UIKit
 
 final class cellTable: UITableViewCell {
     
+    private let networkManager = NetworkManager.shared
+    
     @IBOutlet weak var id: UILabel!
     @IBOutlet weak var name: UILabel!
     @IBOutlet weak var email: UILabel!
@@ -83,13 +85,10 @@ final class cellTable: UITableViewCell {
         id.text = String(anyHuman.id)
         name.text = anyHuman.name
         email.text = anyHuman.email
-        
-        DispatchQueue.global().async {
-            guard let imageData = try? Data(contentsOf: URL(fileReferenceLiteralResourceName: String("https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/2560px-Google_2015_logo.svg.png"))) else {return}
-            DispatchQueue.main.async { [unowned self] in
-                photo.image = UIImage(data: imageData)
-            }
+        networkManager.fetchImage(from: Images.image.url) { [unowned self] imageData in
+            photo.image = UIImage(data: imageData)
         }
+        
     }
 }
 
@@ -134,15 +133,41 @@ extension tableViewController {
     }
 }
 
+// MARK: - smth was added to practice with replace some big code on the code that in class NetworkManager
+
+enum Images {
+    case image
+    
+    var url: URL {
+    switch self {
+    case .image: return URL(string: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/2560px-Google_2015_logo.svg.png")!
+        }
+    }
+}
+
+final class ImageViewController: UIViewController {
+    
+    private let networkManager = NetworkManager.shared
+    
+    @IBOutlet var imageView: UIImageView!
+    
+    private func fetchImage() {
+        networkManager.fetchImage(from: Images.image.url) { [unowned self] imageData in
+            imageView.image = UIImage(data: imageData)
+        }
+    }
+}
 
 //  MARK: - NetworkManager
+
+
 
 final class NetworkManager {
     static let shared = NetworkManager()
     
     private init() {}
     
-    private func fetchImage(from url: URL, completion: @escaping (Data) -> Void) {
+    func fetchImage(from url: URL, completion: @escaping (Data) -> Void) {
         DispatchQueue.global().async {
             guard let imageData = try? Data(contentsOf: url) else {return}
             DispatchQueue.main.async {
