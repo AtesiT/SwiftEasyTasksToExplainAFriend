@@ -194,3 +194,46 @@ final class NetworkManager {
     }
 }
 
+//  MARK: - JUST A PRACTICE (REPEAT)
+
+let anyURL = URL(filePath: "https://jsonplaceholder.typicode.com/posts")!
+
+struct ParseUser: Decodable {
+    let userId:     Int
+    let id:         Int
+    let title:      String
+    let text:       String
+    
+    enum CodingKeys: String, CodingKey {
+        case userId = "userId"
+        case id = "id"
+        case title = "title"
+        
+        case text = "body"
+    }
+}
+
+func urlSessionParsseData() {
+    URLSession.shared.dataTask(with: anyURL) { data, response, error in
+        guard let data, let response else {
+            print(error?.localizedDescription ?? "Problems? No. ")
+            return
+        }
+        do {
+            let ourParseData = try JSONDecoder().decode([ParseUser].self, from: data)
+            print(ourParseData)
+        } catch {
+            print(error)
+        }
+    }.resume()
+}
+
+func fetchAnyData(from url: URL, completion: @escaping (Data) -> Void) {
+    DispatchQueue.global().async {
+        guard let imageData = try? Data(contentsOf: url) else {return}
+        DispatchQueue.main.async {
+            completion(imageData)
+        }
+    }
+}
+
