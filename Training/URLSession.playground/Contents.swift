@@ -338,4 +338,23 @@ mainFetchData.fetchCourse(from: theURL) { result in
     }
 }
 
-
+let testURL = URL(string: "https://jsonplaceholder.typicode.com/posts/1")!
+//  WE WILL BE CREATE UNIVERSAL FUNCTION TO FETCH ANY DATA
+final class UnversalFetchData {
+    
+    
+    
+    func fetchAnyData<T: Decodable >(_ type: T.Type, from url: URL, completion: @escaping (Result<T,NetworkError>) -> Void) {
+        URLSession.shared.dataTask(with: testURL) { data, response, error in
+            guard let data, let response else { return }
+            
+            do {
+                let anyDecodeData = try JSONDecoder().decode(T.self, from: data)
+                completion(.success(anyDecodeData))
+            } catch {
+                completion(.failure(.decodingError))
+                return
+            }
+        }.resume()
+    }
+}
