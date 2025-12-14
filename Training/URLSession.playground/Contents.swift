@@ -350,7 +350,9 @@ final class UnversalFetchData {
             
             do {
                 let anyDecodeData = try JSONDecoder().decode(T.self, from: data)
-                completion(.success(anyDecodeData))
+                DispatchQueue.main.async {
+                    completion(.success(anyDecodeData))
+                }
             } catch {
                 completion(.failure(.decodingError))
                 return
