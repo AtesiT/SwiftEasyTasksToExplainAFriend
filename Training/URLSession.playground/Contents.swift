@@ -196,7 +196,7 @@ final class NetworkManager {
 
 //  MARK: - JUST A PRACTICE (REPEAT)
 
-let anyURL = URL(filePath: "https://jsonplaceholder.typicode.com/posts")!
+let anyURL = URL(string: "https://jsonplaceholder.typicode.com/posts")!
 
 struct ParseUser: Decodable {
     let userId:     Int
@@ -304,8 +304,7 @@ final class MainFetchData {
             } catch {
                 print(error)
             }
-            
-        }
+        }.resume()
     }
 }
 
@@ -325,3 +324,18 @@ final class TakeImageViewController: UIViewController {
         }
     }
 }
+
+let theURL = URL(string: "https://jsonplaceholder.typicode.com/posts/1")!
+let mainFetchData = MainFetchData.shared
+mainFetchData.fetchCourse(from: theURL) { result in
+    switch result {
+    case .success(let data):
+        print(data)
+        print("Success")
+    case .failure(let error):
+        print(error)
+        print("Failed")
+    }
+}
+
+
