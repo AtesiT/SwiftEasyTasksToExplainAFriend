@@ -258,6 +258,27 @@ func fetchSmth(from url: URL, completion: @escaping (Data) -> Void) {
     }
 }
 
+//  MARK: - REPEAT:     JSON    &&  DispatchQueue   &&  Practice with @escaping Result<Success,Failure>
+
+enum LinksOnJSON {
+    case user
+    case users
+    
+    var url: URL {
+        switch self {
+        case .user: return URL(string: "https://jsonplaceholder.typicode.com/posts/1")!
+        case .users: return URL(string: "https://jsonplaceholder.typicode.com/posts")!
+        }
+    }
+}
+
+struct styleJSON: Decodable {
+    let userId:     Int
+    let id:         Int
+    
+    
+}
+
 final class MainFetchData {
     static let shared = MainFetchData()
     
@@ -273,10 +294,20 @@ final class MainFetchData {
             }
         }
     }
+    func fetchCourse(from url: URL, completion: @escaping (Result<Data, NetworkError>) -> Void) {
+        URLSession.shared.dataTask(with: LinksOnJSON.user.url) { data, response, error in
+            guard let data, let response else {return}
+            
+            do {
+                let dataJSON = try JSONDecoder().decode(styleJSON.self, from: data)
+                print(dataJSON)
+            } catch {
+                print(error)
+            }
+            
+        }
+    }
 }
-
-
-
 
 final class TakeImageViewController: UIViewController {
     @IBOutlet weak var imageView: UIImageView!
