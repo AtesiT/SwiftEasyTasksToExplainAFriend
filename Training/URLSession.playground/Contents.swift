@@ -237,3 +237,60 @@ func fetchAnyData(from url: URL, completion: @escaping (Data) -> Void) {
     }
 }
 
+//  I FORGOT ALREADY 0.0
+func fetch(from url: URL, completion: @escaping (Data) -> Void) {
+    DispatchQueue.global().async {
+        guard let imageData = try? Data(contentsOf: url) else {return}
+        DispatchQueue.main.async {
+            completion(imageData)
+        }
+    }
+}
+
+//  Let's write again (after 3 days)
+
+func fetchSmth(from url: URL, completion: @escaping (Data) -> Void) {
+    DispatchQueue.global().async {
+        guard let imageData = try? Data(contentsOf: url) else {return}
+        DispatchQueue.main.async {
+            completion(imageData)
+        }
+    }
+}
+
+final class MainFetchData {
+    static let shared = MainFetchData()
+    
+    private init() {}
+    
+    func fetchDataWithUseResult(from url: URL, completion: @escaping (Result<Data, NetworkError>) -> Void) {
+        DispatchQueue.global().async {
+            guard let imagedata = try? Data(contentsOf: url) else {
+                completion(.failure(NetworkError.noData))
+                return}
+            DispatchQueue.main.async {
+                completion(.success(imagedata))
+            }
+        }
+    }
+}
+
+
+
+
+final class TakeImageViewController: UIViewController {
+    @IBOutlet weak var imageView: UIImageView!
+    
+    private let mainFetchData = MainFetchData.shared
+    
+    func fetchImage() {
+        mainFetchData.fetchDataWithUseResult(from: anyURL) { [unowned self] result in
+        switch result {
+        case .success(let data):
+            self.imageView.image = UIImage(data: data)
+        case .failure(let error):
+            print(error)
+            }
+        }
+    }
+}
