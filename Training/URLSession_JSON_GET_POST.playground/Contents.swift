@@ -69,18 +69,36 @@ final class NetworkManager {
 
 //  MARK: -         Universal Data
 
+enum Errors: Error {
+    case MemoryError
+    case RunningError
+    case DataError
+    
+    var title: String {
+        switch self {
+        case .MemoryError:
+            return "Memory in your device is not enough"
+        case .RunningError:
+            return "Something went wrong"
+        case .DataError:
+            return "Data is not correct"
+        }
+    }
+}
+
 final class UniversalNetworkManager {
     static let shared = UniversalNetworkManager()
     
     private init() {}
     
-    func fetchUniversalData(from url: URL, completion: @escaping(Data) -> Void) {
+    func fetchUniversalData<T: Decodable>(_ type: T.Type, from url: URL, completion: @escaping(T) -> Void) {
         URLSession.shared.dataTask(with: Links.Json.url) { data, response, error in
             guard let data, let response else {
                 print(error?.localizedDescription ?? "No error - no anything")
+                return
             }
             do {
-                let data = try JSONDecoder().decode(Datas.self, from: data)
+                let data = try JSONDecoder().decode(T.self, from: data)
                 print(data)
             } catch {
                 print(error.localizedDescription)
@@ -88,9 +106,31 @@ final class UniversalNetworkManager {
         }
     }
     
+    func fetchAnyDataWithReturnErrors<T: Decodable>(_ type: T.Type, from url: URL, completion: @escaping(Result<T,Errors>) -> Void) {
+        URLSession.shared.dataTask(with: Links.Json.url) { data, _, error in
+            guard let data else { return }
+            
+            do {
+                let jsonData = try JSONDecoder().decode(T.self, from: data)
+                DispatchQueue.main.async {
+                    completion(.success(jsonData))
+                }
+            } catch {
+                completion(.failure(.DataError))
+            }
+        }
+    }
+    
     func fetchUniversalImage(from url: URL, competion: @escaping(Data) -> Void) {
-        
+        DispatchQueue.global().async {
+            guard let imageData = try? Data(contentsOf: url) else { return }
+            DispatchQueue.main.async {
+                competion(imageData)
+            }
+        }
     }
 }
+
+
 
 
