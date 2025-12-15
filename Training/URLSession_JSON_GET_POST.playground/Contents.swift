@@ -47,7 +47,7 @@ final class NetworkManager {
                 return
             }
             do {
-                let data = try JSONDecoder().decode(Data.self, from: data)
+                let data = try JSONDecoder().decode(Datas.self, from: data)
                 print(data)
             } catch {
                 print(error.localizedDescription)
@@ -69,6 +69,28 @@ final class NetworkManager {
 
 //  MARK: -         Universal Data
 
-
+final class UniversalNetworkManager {
+    static let shared = UniversalNetworkManager()
+    
+    private init() {}
+    
+    func fetchUniversalData(from url: URL, completion: @escaping(Data) -> Void) {
+        URLSession.shared.dataTask(with: Links.Json.url) { data, response, error in
+            guard let data, let response else {
+                print(error?.localizedDescription ?? "No error - no anything")
+            }
+            do {
+                let data = try JSONDecoder().decode(Datas.self, from: data)
+                print(data)
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
+    func fetchUniversalImage(from url: URL, competion: @escaping(Data) -> Void) {
+        
+    }
+}
 
 
