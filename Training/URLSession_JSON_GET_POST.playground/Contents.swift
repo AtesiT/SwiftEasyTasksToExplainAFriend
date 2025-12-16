@@ -129,6 +129,28 @@ final class UniversalNetworkManager {
             }
         }
     }
+    
+    func postRequest(with parameters: [String: Any], to url: URL, completion: @escaping(Result<Any, Errors>) -> Void) {
+        let serializedData = try? JSONSerialization.data(withJSONObject: parameters)
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.httpBody = serializedData
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let data, let response else {
+                print(error?.localizedDescription ?? "No error")
+                return
+            }
+            print(response)
+            do {
+                let json = try JSONSerialization.jsonObject(with: data)
+                completion(.success(data))
+            } catch {
+                completion(.failure(.DataError))
+            }
+        }
+    }
 }
 
 
