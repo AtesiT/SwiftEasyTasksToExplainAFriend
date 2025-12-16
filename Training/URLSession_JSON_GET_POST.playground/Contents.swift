@@ -52,7 +52,7 @@ final class NetworkManager {
             } catch {
                 print(error.localizedDescription)
             }
-        }
+        }.resume()
     }
     
     func fetchImage(from url: URL, completion: @escaping(Data) -> Void) {
@@ -103,7 +103,7 @@ final class UniversalNetworkManager {
             } catch {
                 print(error.localizedDescription)
             }
-        }
+        }.resume()
     }
     
     func fetchAnyDataWithReturnErrors<T: Decodable>(_ type: T.Type, from url: URL, completion: @escaping(Result<T,Errors>) -> Void) {
@@ -118,7 +118,7 @@ final class UniversalNetworkManager {
             } catch {
                 completion(.failure(.DataError))
             }
-        }
+        }.resume()
     }
     
     func fetchUniversalImage(from url: URL, competion: @escaping(Data) -> Void) {
@@ -135,6 +135,7 @@ final class UniversalNetworkManager {
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = serializedData
         
         URLSession.shared.dataTask(with: request) { data, response, error in
@@ -149,10 +150,36 @@ final class UniversalNetworkManager {
             } catch {
                 completion(.failure(.DataError))
             }
+        }.resume()
+    }
+}
+
+let urlPostData = URL(string: "https://jsonplaceholder.typicode.com/posts")!
+
+final class TestGetAndPostRequests: UIViewController {
+    let networkManager = UniversalNetworkManager.shared
+    
+    
+    func postRequest() {
+        let parameters = [
+            "name": "John",
+            "uniqueKey": "ABC123"
+        ]
+        
+        networkManager.postRequest(with: parameters, to: urlPostData) { [weak self] result in
+            guard let self else { return }
+            
+            switch result {
+            case .success(let json):
+                print(json)
+            case .failure(let error):
+                print(error)
+            }
         }
     }
 }
 
-
-
+let vc = TestGetAndPostRequests()
+_ = vc.view
+vc.postRequest()
 
