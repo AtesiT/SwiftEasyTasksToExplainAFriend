@@ -23,8 +23,8 @@ enum Links {
     }
 }
 
-struct Datas: Decodable {
-    var id: Int
+struct Datas: Codable {
+    var id: String
     var body: String
     
     enum CodingKeys: String, CodingKey {
@@ -86,6 +86,15 @@ enum Errors: Error {
     }
 }
 
+//struct People {
+//    var name: String
+//    var surname: String
+//    
+//    var fullName: String {
+//        return "\(name) \(surname)"
+//    }
+//}
+
 final class UniversalNetworkManager {
     static let shared = UniversalNetworkManager()
     
@@ -130,7 +139,7 @@ final class UniversalNetworkManager {
         }
     }
     
-    func postRequest(with parameters: [String: Any], to url: URL, completion: @escaping(Result<Any, Errors>) -> Void) {
+    func newPostRequestWithDictionary(with parameters: [String: Any], to url: URL, completion: @escaping(Result<Any, Errors>) -> Void) {
         let serializedData = try? JSONSerialization.data(withJSONObject: parameters)
         
         var request = URLRequest(url: url)
@@ -152,6 +161,30 @@ final class UniversalNetworkManager {
             }
         }.resume()
     }
+    func newPostRequestWithModel(with parameters: Datas, to url: URL, completion: @escaping(Result<Any,Errors>) -> Void) {
+        //  Мы в этом случае работаем с моделью. В модели свойства не опциональны и проще обработать заранее.
+        guard let encodedJSON = try? JSONEncoder().encode(parameters) else {
+            completion(.failure(.DataError))
+            return
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = encodedJSON
+        
+        URLSession.shared.dataTask(with: request) { data, _, error in
+            guard let data else {
+                print(error?.localizedDescription ?? "No error")
+                return
+            }
+            do {
+                let convertedData = try JSONDecoder().decode(Datas.self, from: data)
+                completion(.success(convertedData))
+            } catch {
+                completion(.failure(.DataError))
+            }
+        }
+    }
 }
 
 let urlPostData = URL(string: "https://jsonplaceholder.typicode.com/posts")!
@@ -160,13 +193,13 @@ final class TestGetAndPostRequests: UIViewController {
     let networkManager = UniversalNetworkManager.shared
     
     
-    func postRequest() {
+    func postRequestWithDictionary() {
         let parameters = [
             "name": "John",
             "uniqueKey": "ABC123"
         ]
         
-        networkManager.postRequest(with: parameters, to: urlPostData) { [weak self] result in
+        networkManager.newPostRequestWithDictionary(with: parameters, to: urlPostData) { [weak self] result in
             guard let self else { return }
             
             switch result {
@@ -177,9 +210,24 @@ final class TestGetAndPostRequests: UIViewController {
             }
         }
     }
+    func postRequestWithModel() {
+        let datas = Datas(id: "1", body: "World")
+        
+        networkManager.newPostRequestWithModel(with: datas, to: urlPostData) { [weak self] result in
+            guard let self else {return}
+            
+            switch result {
+            case .success(let data):
+                print(data)
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+    
 }
 
 let vc = TestGetAndPostRequests()
 _ = vc.view
-vc.postRequest()
+vc.postRequestWithDictionary()
 
